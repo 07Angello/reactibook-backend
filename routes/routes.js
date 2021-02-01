@@ -1,11 +1,11 @@
 const { Router } = require('express');
 const router = Router();
-const apiPrefix = 'api';
+const apiPrefix = '/api';
 
 // Importing Routes
-const postRoutes = require('../features/posts/postRoutes');
+const posts = require('../features/posts/postRoutes');
 
 // Implementing Routes
-router.use(`${apiPrefix}/posts`, postRoutes);
+router.use(`${apiPrefix}/posts`, posts);
 
 module.exports = router;

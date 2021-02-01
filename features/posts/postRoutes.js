@@ -10,14 +10,12 @@ const { createPost } = require('./postAppService');
 
 const router = Router();
 
-router.post(
-    '/',
+router.post('/',
     [
         check("content", "The content can not be null or empty.").not().isEmpty(),
         check("filter", "The filter by option can not be null or empty.").not().isEmpty(),
         fieldsValidator
     ],
-    createPost
-);
+    createPost);
 
 module.exports = router;

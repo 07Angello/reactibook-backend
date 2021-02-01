@@ -14,9 +14,11 @@ const createPost = async(req, res = response) => {
             Message: '',
             Data: newPost
         });
+
+        console.log(newPost);
     } catch (error) {
         console.log(error);
-        
+
         res.status(500).json({
             OK: false,
             Message: 'An error has ocurred. Contact with the IT manager.',
