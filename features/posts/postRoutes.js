@@ -1,14 +1,14 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { fieldsValidator } = require('../../middlewares/fields-validator');
-const { createPost } = require('./postAppService');
+const { createPost, getPosts } = require('./postAppService');
+
+const router = Router();
 
 /*
     Posts Routes
     host + /api/posts
 */
-
-const router = Router();
 
 router.post('/',
     [
@@ -17,5 +17,7 @@ router.post('/',
         fieldsValidator
     ],
     createPost);
+
+router.get("/", getPosts);
 
 module.exports = router;
