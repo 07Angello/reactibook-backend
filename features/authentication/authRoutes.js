@@ -1,6 +1,6 @@
 const express = require('express');
 const { check } = require('express-validator');
-const { fieldsValidator } = require('../../middlewares/fields-validator');
+const { fieldsValidator } = require('../../middlewares/fieldsValidator');
 const { createUser, loginUser, renewToken } = require('./authAppService');
 const { jwtValidator } = require('../../middlewares/jwtValidator');
 

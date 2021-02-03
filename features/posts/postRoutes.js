@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { fieldsValidator } = require('../../middlewares/fields-validator');
+const { fieldsValidator } = require('../../middlewares/fieldsValidator');
 const { createPost, getPosts, updatePost, deletePost, getPost } = require('./postAppService');
 const { jwtValidator } = require('../../middlewares/jwtValidator');
 const { isDate } = require('../../helpers/isDate');
