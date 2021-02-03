@@ -6,7 +6,7 @@ const createPost = async(req, res = response) => {
     const post = new Post(req.body);
     
     try {
-        // post.user = req.uid;
+        post.user = req.uid;
         const newPost = await post.save();
 
         res.status(201).json({
@@ -25,20 +25,18 @@ const createPost = async(req, res = response) => {
     }
 }
 
-// GET: api/posts/
+// GET: api/posts/:filter/:userId
 const getPosts = async( req, res = response ) => {
-    console.log('test')
-    const { pageNumber } = req.body;
     const filteredPosts = req.params.filter;
+    const userId = req.params.userId;
 
-    const pgNumber = pageNumber == 0 ? 0 : Number(pageNumber);
     const srchPosts = filteredPosts == null || filteredPosts == '' || filteredPosts == 'ALL' ? '' : filteredPosts;
 
     const regex = new RegExp(srchPosts, 'i');
 
-    await Post.find( {"filter": regex} )
+    await Post.find( {"user": userId, "filter": regex} )
                 .sort({'createdAt': 'descending' })
-                .populate( 'user' )
+                .populate( 'user', 'name' )
                 .exec(( err, posts ) => {
                     if (err) {
                         return res.status(400).json({
@@ -48,9 +46,9 @@ const getPosts = async( req, res = response ) => {
                     }
 
                     if (!posts || posts.length === 0) {
-                        return res.status(204).json({
+                        return res.status(200).json({
                             Data: "",
-                            Message: "Could not founds posts with these filters."
+                            Message: "Could not find posts."
                         });
                     }
 
@@ -61,7 +59,102 @@ const getPosts = async( req, res = response ) => {
                 });
 }
 
+// PUT: api/posts/:id
+const updatePost = async(req, res = response) => {
+    const postId = req.params.id;
+    const uid = req.uid;
+
+    const post = await Post.findById( postId );
+
+    try {
+        if ( !post ) {
+            return res.status(404).json({
+                Data: null,
+                Message: 'Could not find any post to update'
+            });
+        }
+
+        const newPost = {
+            ...req.body,
+            isEdited: true,
+            user: uid
+        }
+
+        const postUpated = await Post.findByIdAndUpdate(postId, newPost, { new: true });
+            
+        return res.status(201).json({
+            Data: postUpated,
+            Message: ''
+        });
+    } catch ( error ) {
+        console.log(error);
+        return res.status(500).json({
+            Data: null,
+            Message: 'An error has ocurred. Contact with the IT manager.'
+        });
+    }
+}
+
+// DELETE: api/posts/:id
+const deletePost = async(req, res = response) => {
+    const postId = req.params.id;
+
+    const post = await Post.findById( postId );
+
+    try {
+        if ( !post ) {
+            return res.status(404).json({
+                Data: null,
+                Message: 'Could not find any post to delete.'
+            });
+        }
+
+        await Post.findByIdAndDelete( postId );
+
+        return res.status(200).json({
+            Data: post,
+            Message: ''
+        });
+    } catch ( error ) {
+        console.log(error);
+        return res.status(500).json({
+            Data: null,
+            Message: 'An error has ocurred. Contact with the IT manager.'
+        });
+    }
+}
+
+// GET: api/posts/:id
+const getPost = async(req, res = response) => {
+    const postId = req.params.id;
+
+    try {
+        const post = await Post.findById( postId );
+
+        if ( !post ) {
+            return res.status(200).json({
+                Data: null,
+                Message: 'Could not find any post with this ID.'
+            });
+        }
+            
+        return res.status(201).json({
+            Data: post,
+            Message: ''
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            Data: null,
+            Message: 'An error has ocurred. Contact with the IT manager.'
+        });
+    }
+}
+
 module.exports = {
     createPost,
-    getPosts
+    getPosts,
+    updatePost,
+    deletePost,
+    getPost
 };

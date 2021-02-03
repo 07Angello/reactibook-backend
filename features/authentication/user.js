@@ -6,11 +6,6 @@ const UserSchema = Schema({
         required: true,
         trim: true
     },
-    lastName: {
-        type: String,
-        required: true,
-        trim: true
-    },
     email: {
         type: String,
         required: true,
@@ -18,8 +13,7 @@ const UserSchema = Schema({
     },
     password: {
         type: String,
-        required: true,
-        trim: true
+        required: true
     },
     isActive: {
         type: Boolean,

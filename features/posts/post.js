@@ -10,6 +10,14 @@ const PostSchema = Schema({
         type: String,
         required: true
     },
+    isEdited: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    creationDate: {
+        type: Date
+    },
     user: {
         type: Schema.Types.ObjectId,
         ref: "User"
