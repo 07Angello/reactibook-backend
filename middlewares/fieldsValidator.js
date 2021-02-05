@@ -7,7 +7,7 @@ const fieldsValidator = (req, res = response, next) => {
     if ( !error.isEmpty() ) {
         const errorMessage = error.errors[0].msg;
 
-        return res.status(400).json({
+        return res.status(203).json({
             OK: false,
             Message: errorMessage,
             Data: null

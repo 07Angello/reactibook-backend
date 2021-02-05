@@ -7,6 +7,8 @@ const createPost = async(req, res = response) => {
     
     try {
         post.user = req.uid;
+        post.isEdited = false;
+
         const newPost = await post.save();
 
         res.status(201).json({
@@ -50,7 +52,7 @@ const getPosts = async( req, res = response ) => {
                         return res.status(200).json({
                             OK: false,
                             Data: null,
-                            Message: "Could not find posts."
+                            Message: "You do not have posts yet."
                         });
                     }
 
