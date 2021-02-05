@@ -6,7 +6,7 @@ const jwtValidator = ( req, res = response, next ) => {
     const token = req.header('x-token');
 
     if ( !token ) {
-        return res.status(401).json({
+        return res.json({
             Data: null,
             Message: 'There is no token in the request.'
         });
