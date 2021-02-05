@@ -72,7 +72,7 @@ const loginUser = async (req, res = response) => {
         const generatedToken = await generateJWT( existingUser.id, existingUser.name );
 
         existingUser.password = '*******';
-        console.log(existingUser);
+
         return res.status(202).json({
             OK: true,
             Message: '',
@@ -91,16 +91,16 @@ const loginUser = async (req, res = response) => {
 
 // GET: api/auth/renew-token/
 const renewToken = async(req, res = response) => {
-    const { uid, name, profilePhoto, coverPhoto } = req;
-
-    console.log(uid, name, profilePhoto, coverPhoto);
+    const { uid, name } = req;
 
     const generatedToken = await generateJWT( uid, name );
+
+    const existingUser = await User.findOne({ _id: uid });
 
     return res.json({
         OK: true,
         Message: '',
-        Data: { _id:uid, name, profilePhoto, coverPhoto },
+        Data: existingUser,
         Token: generatedToken
     });
 }
