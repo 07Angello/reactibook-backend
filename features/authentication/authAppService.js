@@ -91,7 +91,9 @@ const loginUser = async (req, res = response) => {
 
 // GET: api/auth/renew-token/
 const renewToken = async(req, res = response) => {
-    const { uid, name, profilePhoto, coverPhoto } = req
+    const { uid, name, profilePhoto, coverPhoto } = req;
+
+    console.log(uid, name, profilePhoto, coverPhoto);
 
     const generatedToken = await generateJWT( uid, name );
 
