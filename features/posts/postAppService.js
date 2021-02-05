@@ -40,19 +40,22 @@ const getPosts = async( req, res = response ) => {
                 .exec(( err, posts ) => {
                     if (err) {
                         return res.status(400).json({
-                            Data: "",
+                            OK: false,
+                            Data: null,
                             Message: err.message
                         });
                     }
 
                     if (!posts || posts.length === 0) {
                         return res.status(200).json({
-                            Data: "",
+                            OK: false,
+                            Data: null,
                             Message: "Could not find posts."
                         });
                     }
 
                     return res.status(200).json({
+                        OK: true,
                         Data: posts,
                         Message: ""
                     });
@@ -69,6 +72,7 @@ const updatePost = async(req, res = response) => {
     try {
         if ( !post ) {
             return res.status(404).json({
+                OK: false,
                 Data: null,
                 Message: 'Could not find any post to update'
             });
@@ -83,12 +87,14 @@ const updatePost = async(req, res = response) => {
         const postUpated = await Post.findByIdAndUpdate(postId, newPost, { new: true });
             
         return res.status(201).json({
+            OK: true,
             Data: postUpated,
             Message: ''
         });
     } catch ( error ) {
         console.log(error);
         return res.status(500).json({
+            OK: false,
             Data: null,
             Message: 'An error has ocurred. Contact with the IT manager.'
         });
@@ -104,6 +110,7 @@ const deletePost = async(req, res = response) => {
     try {
         if ( !post ) {
             return res.status(404).json({
+                OK: false,
                 Data: null,
                 Message: 'Could not find any post to delete.'
             });
@@ -112,12 +119,14 @@ const deletePost = async(req, res = response) => {
         await Post.findByIdAndDelete( postId );
 
         return res.status(200).json({
+            OK: true,
             Data: post,
             Message: ''
         });
     } catch ( error ) {
         console.log(error);
         return res.status(500).json({
+            OK: false,
             Data: null,
             Message: 'An error has ocurred. Contact with the IT manager.'
         });
@@ -133,18 +142,21 @@ const getPost = async(req, res = response) => {
 
         if ( !post ) {
             return res.status(200).json({
+                OK: false,
                 Data: null,
                 Message: 'Could not find any post with this ID.'
             });
         }
             
         return res.status(201).json({
+            OK: true,
             Data: post,
             Message: ''
         });
     } catch (error) {
         console.log(error);
         return res.status(500).json({
+            OK: false,
             Data: null,
             Message: 'An error has ocurred. Contact with the IT manager.'
         });

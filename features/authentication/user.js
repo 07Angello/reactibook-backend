@@ -15,6 +15,12 @@ const UserSchema = Schema({
         type: String,
         required: true
     },
+    profilePhoto: {
+        type: String
+    },
+    coverPhoto: {
+        type: String
+    },
     isActive: {
         type: Boolean,
         required: true,
