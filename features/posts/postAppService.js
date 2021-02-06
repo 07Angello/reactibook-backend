@@ -52,7 +52,7 @@ const getPosts = async( req, res = response ) => {
                         return res.status(200).json({
                             OK: false,
                             Data: null,
-                            Message: "You do not have posts yet."
+                            Message: "You do not have posts with this filter yet."
                         });
                     }
 

@@ -16,7 +16,7 @@ const PostSchema = Schema({
         default: false
     },
     creationDate: {
-        type: Date
+        type: String
     },
     user: {
         type: Schema.Types.ObjectId,
