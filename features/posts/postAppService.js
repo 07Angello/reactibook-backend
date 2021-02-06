@@ -1,5 +1,5 @@
 const { response } = require('express');
-const Post = require('../../models/Post');
+const Post = require('./Post');
 
 // POST: api/posts/
 const createPost = async(req, res = response) => {
