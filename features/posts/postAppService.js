@@ -43,6 +43,7 @@ const getPosts = async( req, res = response ) => {
     await Post.find( {"user": userId, "filter": regex} )
                 .sort({'createdAt': 'descending' })
                 .populate( 'user', 'name profilePhoto' )
+                .populate('numComments')
                 .exec(( err, posts ) => {
                     if (err) {
                         return res.status(400).json({
