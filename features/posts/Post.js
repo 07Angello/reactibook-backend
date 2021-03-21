@@ -28,6 +28,14 @@ const PostSchema = Schema({
     timestamps: true
 });
 
+PostSchema.virtual('comments', {
+    ref: 'Comment',
+    localField: '_id',
+    foreignField: 'post',
+    justOne: false,
+    //match: { isActive: true }
+  });
+
 PostSchema.virtual('numComments', {
     ref: 'Comment', // The model to use
     localField: '_id', // Find people where `localField`

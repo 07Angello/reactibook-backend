@@ -45,6 +45,12 @@ const getPosts = async( req, res = response ) => {
                 .sort({'createdAt': 'descending' })
                 .populate( 'user', 'name profilePhoto' )
                 .populate('numComments')
+                .populate({
+                    path: 'comments',
+                    populate: {
+                        path: 'user'
+                    }
+                })
                 .exec(( err, posts ) => {
                     if (err) {
                         return res.status(400).json({
@@ -76,6 +82,12 @@ const getAllPosts = async( req, res = response ) => {
                 .sort({'createdAt': 'descending' })
                 .populate( 'user', 'name profilePhoto' )
                 .populate('numComments')
+                .populate({
+                    path: 'comments',
+                    populate: {
+                        path: 'user'
+                    }
+                })
                 .exec(( err, posts ) => {
                     if (err) {
                         return res.status(400).json({
