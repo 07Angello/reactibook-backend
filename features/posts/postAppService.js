@@ -63,8 +63,8 @@ const getPosts = async( req, res = response ) => {
                     if (!posts || posts.length === 0) {
                         return res.status(200).json({
                             OK: false,
-                            Data: null,
-                            Message: 'You do not have posts with this filter yet.'
+                            Data: [],
+                            Message: ''
                         });
                     }
 
