@@ -14,6 +14,7 @@ const createPost = async(req, res = response) => {
         const newPost = await post.save();
 
         newPost.user = userInfo;
+        newPost.numComments = 0;
 
         res.status(201).json({
             OK: true,
@@ -92,8 +93,6 @@ const getAllPosts = async( req, res = response ) => {
                         });
                     }
 
-                    console.log(posts);
-
                     return res.status(200).json({
                         OK: true,
                         Data: posts,
@@ -108,7 +107,8 @@ const updatePost = async(req, res = response) => {
     const uid = req.uid;
 
     const post = await Post.findById( postId )
-                            .populate( 'user', '_id' );
+                            .populate( 'user', '_id' )
+                            .populate('numComments');
 
     try {
         if ( !post ) {
@@ -134,7 +134,8 @@ const updatePost = async(req, res = response) => {
         }
 
         const postUpated = await Post.findByIdAndUpdate(postId, newPost, { new: true })
-                                        .populate( 'user', 'name profilePhoto' );
+                                        .populate( 'user', 'name profilePhoto' )
+                                        .populate('numComments');
             
         return res.status(201).json({
             OK: true,
@@ -199,8 +200,6 @@ const getPost = async(req, res = response) => {
 
     try {
         const post = await Post.findById( postId );
-
-        console.log(post.numComments);
 
         if ( !post ) {
             return res.status(200).json({
