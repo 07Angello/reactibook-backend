@@ -150,8 +150,10 @@ const updatePost = async(req, res = response) => {
 // DELETE: api/posts/:id
 const deletePost = async(req, res = response) => {
     const postId = req.params.id;
+    const uid = req.uid;
 
-    const post = await Post.findById( postId );
+    const post = await Post.findById( postId )
+                            .populate( 'user', '_id' );;
 
     try {
         if ( !post ) {
@@ -159,6 +161,14 @@ const deletePost = async(req, res = response) => {
                 OK: false,
                 Data: null,
                 Message: 'Could not find any post to delete.'
+            });
+        }
+
+        if ( post.user.id !== uid ) {
+            return res.status(401).json({
+                OK: false,
+                Data: null,
+                Message: 'Your are NOT the owner of this post. Could not be updated.'
             });
         }
 
