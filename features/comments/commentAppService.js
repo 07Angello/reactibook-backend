@@ -5,11 +5,13 @@ const User = require('../authentication/User');
 // POST: api/comments/
 const createComment = async(req, res = response) => {
     const uid = req.body.uid;
+    const pid = req.body.pid;
+
     const comment = new Comment(req.body);
     
     try {
-        comment.user = req.uid;
-        comment.post = req.pid;
+        comment.user = uid;
+        comment.post = pid;
 
         comment.isEdited = false;
 

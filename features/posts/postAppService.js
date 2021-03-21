@@ -68,11 +68,12 @@ const getPosts = async( req, res = response ) => {
                 });
 }
 
-// GET: api/posts/wall
+// GET: api/posts/wall/ups
 const getAllPosts = async( req, res = response ) => {
     await Post.find( {"filter": 'PUBLIC'} )
                 .sort({'createdAt': 'descending' })
                 .populate( 'user', 'name profilePhoto' )
+                .populate('numComments')
                 .exec(( err, posts ) => {
                     if (err) {
                         return res.status(400).json({
@@ -89,6 +90,8 @@ const getAllPosts = async( req, res = response ) => {
                             Message: 'There are no posts to show.'
                         });
                     }
+
+                    console.log(posts);
 
                     return res.status(200).json({
                         OK: true,
@@ -195,6 +198,8 @@ const getPost = async(req, res = response) => {
 
     try {
         const post = await Post.findById( postId );
+
+        console.log(post.numComments);
 
         if ( !post ) {
             return res.status(200).json({
