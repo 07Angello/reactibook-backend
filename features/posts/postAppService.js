@@ -1,5 +1,6 @@
 const { response } = require('express');
 const Post = require('./Post');
+const User = require('../authentication/User');
 
 // POST: api/posts/
 const createPost = async(req, res = response) => {
@@ -9,7 +10,10 @@ const createPost = async(req, res = response) => {
         post.user = req.uid;
         post.isEdited = false;
 
+        const userInfo = await User.findById( post.user );
         const newPost = await post.save();
+
+        newPost.user = userInfo;
 
         res.status(201).json({
             OK: true,
@@ -38,7 +42,7 @@ const getPosts = async( req, res = response ) => {
 
     await Post.find( {"user": userId, "filter": regex} )
                 .sort({'createdAt': 'descending' })
-                .populate( 'user', 'name' )
+                .populate( 'user', 'name profilePhoto' )
                 .exec(( err, posts ) => {
                     if (err) {
                         return res.status(400).json({
@@ -52,14 +56,44 @@ const getPosts = async( req, res = response ) => {
                         return res.status(200).json({
                             OK: false,
                             Data: null,
-                            Message: "You do not have posts with this filter yet."
+                            Message: 'You do not have posts with this filter yet.'
                         });
                     }
 
                     return res.status(200).json({
                         OK: true,
                         Data: posts,
-                        Message: ""
+                        Message: ''
+                    });
+                });
+}
+
+// GET: api/posts/wall
+const getAllPosts = async( req, res = response ) => {
+    await Post.find( {"filter": 'PUBLIC'} )
+                .sort({'createdAt': 'descending' })
+                .populate( 'user', 'name profilePhoto' )
+                .exec(( err, posts ) => {
+                    if (err) {
+                        return res.status(400).json({
+                            OK: false,
+                            Data: null,
+                            Message: err.message
+                        });
+                    }
+
+                    if (!posts || posts.length === 0) {
+                        return res.status(200).json({
+                            OK: true,
+                            Data: [],
+                            Message: 'There are no posts to show.'
+                        });
+                    }
+
+                    return res.status(200).json({
+                        OK: true,
+                        Data: posts,
+                        Message: ''
                     });
                 });
 }
@@ -69,7 +103,8 @@ const updatePost = async(req, res = response) => {
     const postId = req.params.id;
     const uid = req.uid;
 
-    const post = await Post.findById( postId );
+    const post = await Post.findById( postId )
+                            .populate( 'user', '_id' );
 
     try {
         if ( !post ) {
@@ -80,13 +115,22 @@ const updatePost = async(req, res = response) => {
             });
         }
 
+        if ( post.user.id !== uid ) {
+            return res.status(401).json({
+                OK: false,
+                Data: null,
+                Message: 'Your are NOT the owner of this post. Could not be updated.'
+            });
+        }
+
         const newPost = {
             ...req.body,
             isEdited: true,
             user: uid
         }
 
-        const postUpated = await Post.findByIdAndUpdate(postId, newPost, { new: true });
+        const postUpated = await Post.findByIdAndUpdate(postId, newPost, { new: true })
+                                        .populate( 'user', 'name profilePhoto' );
             
         return res.status(201).json({
             OK: true,
@@ -170,5 +214,6 @@ module.exports = {
     getPosts,
     updatePost,
     deletePost,
-    getPost
+    getPost,
+    getAllPosts
 }

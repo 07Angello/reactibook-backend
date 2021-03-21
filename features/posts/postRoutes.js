@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { fieldsValidator } = require('../../middlewares/fieldsValidator');
-const { createPost, getPosts, updatePost, deletePost, getPost } = require('./postAppService');
+const { createPost, getPosts, updatePost, deletePost, getPost, getAllPosts } = require('./postAppService');
 const { jwtValidator } = require('../../middlewares/jwtValidator');
 const { isDate } = require('../../helpers/isDate');
 
@@ -35,5 +35,7 @@ router.put("/:id",
 router.delete("/:id", deletePost);
 
 router.get("/:id", getPost);
+
+router.get("/all/wall/ups", getAllPosts);
 
 module.exports = router;
