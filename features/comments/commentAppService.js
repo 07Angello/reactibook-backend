@@ -122,7 +122,7 @@ const deleteComment = async(req, res = response) => {
     const commentId = req.params.id;
     const uid = req.uid;
 
-    const comment = await Post.findById( postId )
+    const comment = await Comment.findById( commentId )
                             .populate( 'user', '_id' );;
 
     try {

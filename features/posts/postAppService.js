@@ -15,6 +15,7 @@ const createPost = async(req, res = response) => {
 
         newPost.user = userInfo;
         newPost.numComments = 0;
+        newPost.comments = [];
 
         res.status(201).json({
             OK: true,
@@ -92,7 +93,7 @@ const getAllPosts = async( req, res = response ) => {
                     if (err) {
                         return res.status(400).json({
                             OK: false,
-                            Data: null,
+                            Data: [],
                             Message: err.message
                         });
                     }
@@ -120,7 +121,13 @@ const updatePost = async(req, res = response) => {
 
     const post = await Post.findById( postId )
                             .populate( 'user', '_id' )
-                            .populate('numComments');
+                            .populate('numComments')
+                            .populate({
+                                path: 'comments',
+                                populate: {
+                                    path: 'user'
+                                }
+                            });
 
     try {
         if ( !post ) {
@@ -147,7 +154,12 @@ const updatePost = async(req, res = response) => {
 
         const postUpated = await Post.findByIdAndUpdate(postId, newPost, { new: true })
                                         .populate( 'user', 'name profilePhoto' )
-                                        .populate('numComments');
+                                        .populate('numComments').populate({
+                                            path: 'comments',
+                                            populate: {
+                                                path: 'user'
+                                            }
+                                        });;
             
         return res.status(201).json({
             OK: true,
@@ -170,7 +182,8 @@ const deletePost = async(req, res = response) => {
     const uid = req.uid;
 
     const post = await Post.findById( postId )
-                            .populate( 'user', '_id' );;
+                            .populate( 'user', '_id' );
+    post.comments = [];
 
     try {
         if ( !post ) {
