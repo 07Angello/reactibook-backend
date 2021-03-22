@@ -1,6 +1,7 @@
 const { response } = require('express');
 const Post = require('./Post');
 const User = require('../authentication/User');
+const Comment = require('../comments/Comment');
 
 // POST: api/posts/
 const createPost = async(req, res = response) => {
@@ -154,12 +155,13 @@ const updatePost = async(req, res = response) => {
 
         const postUpated = await Post.findByIdAndUpdate(postId, newPost, { new: true })
                                         .populate( 'user', 'name profilePhoto' )
-                                        .populate('numComments').populate({
+                                        .populate('numComments')
+                                        .populate({
                                             path: 'comments',
                                             populate: {
                                                 path: 'user'
                                             }
-                                        });;
+                                        });
             
         return res.status(201).json({
             OK: true,
@@ -182,8 +184,13 @@ const deletePost = async(req, res = response) => {
     const uid = req.uid;
 
     const post = await Post.findById( postId )
-                            .populate( 'user', '_id' );
-    post.comments = [];
+                            .populate( 'user', '_id' )
+                            .populate({
+                                path: 'comments',
+                                populate: {
+                                    path: 'user'
+                                }
+                            });
 
     try {
         if ( !post ) {
@@ -201,6 +208,10 @@ const deletePost = async(req, res = response) => {
                 Message: 'Your are NOT the owner of this post. Could not be updated.'
             });
         }
+
+        post.comments.map(async(comment) => {
+            await Comment.findByIdAndDelete( comment._id );
+        });
 
         await Post.findByIdAndDelete( postId );
 
